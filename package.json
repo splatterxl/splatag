@@ -18,6 +18,6 @@
   "dependencies": {
     "discord.js": "^13.6.0"
   },
-  "devDependencies": {},
-  "description": ""
+  "description": "",
+  "packageManager": "yarn@3.2.1"
 }

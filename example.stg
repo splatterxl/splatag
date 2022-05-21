@@ -1,0 +1,12 @@
+{
+  set nopreview
+  set trunc=true
+}
+
+Help! I've fallen and I can't get $up!
+
+{
+  define "@someone" "someone to help meeeeee"
+}
+
+I need @someone!

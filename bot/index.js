@@ -1,6 +1,6 @@
 const Discord = require('discord.js');
 
-const parser = new (require('../splatag/parser'))({
+const parser = new (require('../core'))({
   useDefaultContext: false,
 });
 
