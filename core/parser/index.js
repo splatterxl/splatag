@@ -58,7 +58,7 @@ module.exports = class Parser {
           case '{':
             if (this.str.charAt(i + 1) !== ".".toString()) {
               setState(STATES.string, STATES.expression);
-              let [exprAst, ind] = this.expression.matchBlock(++i);
+              let [exprAst, ind] = this.expression.parse(++i);
               i = ind;
               currentValue = exprAst;
               setState(STATES.expression, STATES.string);
