@@ -1,15 +1,23 @@
 const ExpressionParser = require('./expression.js');
+const Result = require('./result.js');
 
 module.exports = class Parser {
   constructor (str = "") {
-    this.str = str;
+    this.str = str + "\n";
     this.length = this.str.length;
     this.index = 0;
     this.expression = new ExpressionParser(this);
   }
 
   parse() {
-    return this.match();
+    try {
+      return new Result(this.match());
+    } catch (e) {
+      return new Result(null, {
+        message: e.message,
+        index: this.index
+      });
+    }
   }
 
   match() {
@@ -19,6 +27,9 @@ module.exports = class Parser {
      */
     let ast = [];
     let currentType = "string";
+    /**
+     * @type {Token[]|string}
+     */
     let currentValue = "";
 
     function push() {
@@ -110,3 +121,9 @@ const STATES = {
   'expression': 1 << 2,
   [1 << 2]: 'expression'
 };
+
+/**
+ * @typedef {Object} Token
+ * @property {string} type
+ * @property {string|Token[]} value
+ */

@@ -10,23 +10,30 @@ const data = fs.readFileSync(file, 'utf8');
 const parser = new (require("./parser"))(data);
 const { parse } = parser;
 let { call: FunctionCall } = Function;
-FunctionCall = FunctionCall.bind(parse);
+const ParseCall = FunctionCall.bind(parse, parser);
+const renderer = new (require("./runtime"))({
+  "test": "test",
+  "up": "down",
+  "someone": "no-one"
+});
+const { render } = renderer;
+const RenderCall = FunctionCall.bind(render, renderer);
 
 if (process.argv[3] === "--bench") {
   process.stdout.write("Warming up...");
   for (let i = 0; i < 1e4; i++) {
-    FunctionCall(parser);
+    ParseCall();
     process.stdout.write(`Warming up... ${i.toLocaleString()}/${(1e4).toLocaleString()}\r`);
   }
   process.stdout.clearLine();
   process.stdout.cursorTo(0);
-  process.stdout.write(`Warming up... 100,000/100,000 done\nBenchmarking...`);
+  process.stdout.write(`Warming up... 10,000/10,000 done\nBenchmarking...`);
 
   let times = [];
 
   // parse file
   for (let i = 0; i < 50; i++) {
-    const date = performance.now(), _ = FunctionCall(parser), newNow = performance.now();
+    const date = performance.now(), ast = ParseCall(), _ = RenderCall(ast), newNow = performance.now();
     let time = parseFloat((newNow - date).toFixed(4));
     times.push(time);
     process.stdout.clearLine();
@@ -40,8 +47,10 @@ if (process.argv[3] === "--bench") {
   console.log(`Total time: ${times.reduce((a, b) => a + b).toFixed(4)}ms`);
 
 } else {
-  const date = performance.now(), ast = FunctionCall(parser), newNow = performance.now(), time = newNow - date;
+  // @ts-ignore
+  const date = performance.now(), ast = ParseCall(), str = RenderCall(ast), newNow = performance.now(), time = newNow - date;
   console.log(require("util").inspect(ast, false, null, true));
+  console.log(str);
   console.log(`-> ${deepLength(ast)} nodes; ${time}ms`);
 }
 

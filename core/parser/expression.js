@@ -12,7 +12,7 @@ module.exports = class ExpressionParser {
 
   /**
    * @param {number} i
-   * @returns {[string, number]}
+   * @returns {[import('.').Token[], number]}
    */
   parse(i) {
     this.index = i;
@@ -33,47 +33,47 @@ module.exports = class ExpressionParser {
   }
 
   handle(token) {
-      let expr = token;
+    let expr = token;
 
-      const next = this.next();
+    const next = this.next();
 
-      if (next.type === "brace-close") {
-        return [expr, true];
-      }
+    if (next.type === "brace-close") {
+      return [expr, true];
+    }
 
-      switch (next.type) {
-        case "dot":
-          expr = this.matchProperty(expr);
-          break;
-        case "plus":
-          expr = this.matchAdd(expr);
-          break;
-        case "minus":
-          expr = this.matchSub(expr);
-          break;
-        case "asterisk":
-          expr = this.matchMul(expr);
-          break;
-        case "slash":
-          expr = this.matchDiv(expr);
-          break;
-        case "mod":
-          expr = this.matchMod(expr);
-          break;
-        case "semi":
-          break;
-        default:
-          throw new Error(`Unexpected token: ${next.type}, expected dot, plus, minus, asterisk, slash, mod, or brace-close`);
-      }
+    switch (next.type) {
+      case "dot":
+        expr = this.matchProperty(expr);
+        break;
+      case "plus":
+        expr = this.matchAdd(expr);
+        break;
+      case "minus":
+        expr = this.matchSub(expr);
+        break;
+      case "asterisk":
+        expr = this.matchMul(expr);
+        break;
+      case "slash":
+        expr = this.matchDiv(expr);
+        break;
+      case "mod":
+        expr = this.matchMod(expr);
+        break;
+      case "semi":
+        break;
+      default:
+        throw new Error(`Unexpected token: ${next.type}, expected dot, plus, minus, asterisk, slash, mod, or brace-close`);
+    }
 
-      return this.handle(expr);
+    return this.handle(expr);
   }
 
   next() {
     let char = this.str.charAt(this.index++);
     let token;
 
-    if (!char.length) return { type: "brace-close" } // throw new Error("Unexpected end of input around " + this.index);
+    if (!char.length) throw new Error("expected token but received eof"); // return { type: "brace-close" }; // throw new Error("Unexpected end of input around " + this.index);
 
     switch (char) {
       case '@':
@@ -144,8 +144,7 @@ module.exports = class ExpressionParser {
           token = this.matchIdent(char);
         } else {
           throw new Error(
-            `Unexpected token: ${char} (index: ${this.index}; code point: U+${
-              char.charCodeAt(0).toString(16).padStart(4, "0")
+            `Unexpected token: ${char} (index: ${this.index}; code point: U+${char.charCodeAt(0).toString(16).padStart(4, "0")
             })`
           );
         }
