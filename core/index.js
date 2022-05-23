@@ -1,7 +1,7 @@
 const Parser = require('./parser');
 const Renderer = require('./runtime');
 
-module.exports = class {
+module.exports = class splatag {
   constructor (options) {
     this.parser = new Parser(options);
     this.renderer = new Renderer(options.context);
